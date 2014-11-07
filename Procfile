@@ -1,0 +1,1 @@
+web: node DEBUG=myapp ./bin/www
