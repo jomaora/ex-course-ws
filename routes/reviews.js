@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var _ = require('lodash');
 
 var reviews = [{name: 'McDo',
     placeType: 'Fastfood',
@@ -43,7 +44,7 @@ router.route('/:id')
             if (req.params.id > reviews.length) {
                 res.status(404).send({'error': 'Id of review not found'});
             } else {
-                delete reviews[req.params.id];
+                _.remove(reviews, reviews[req.params.id]);
                 res.status(204).send({'message': 'Deleted'});
             }
         }
@@ -56,13 +57,7 @@ router.route('/:id')
             if (req.params.id > reviews.length) {
                 res.status(404).send({'error': 'Id of review not found'});
             } else {
-                var review = reviews[req.params.id];
-
-                review.name = (req.body.name) ? req.body.name : review.name;
-                review.placeType = (req.body.placeType) ? req.body.placeType : review.placeType;
-                review.stars = (req.body.stars) ? req.body.stars : review.stars;
-                
-                reviews[req.params.id] = review;
+                reviews[req.params.id] = _.merge(reviews[req.params.id], req.body);
                 res.status(200).send(reviews[req.params.id]);
             }
         }
