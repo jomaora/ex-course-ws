@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var _ = require('lodash');
 var Reviews = require('../database/reviews');
+var authentification = require('../lib/authentification')
 
 router.route('/')
     
@@ -16,20 +17,34 @@ router.route('/')
     })
 
     .post(function (req, res) {
-        if (!req.body.name || !req.body.placeType || !req.body.stars) {
-            res.status(400).send({'error': 'Parametres manquants'});
+        if (!req.headers['authorization']) {
+            res.status(400).send({err: 'Missing Token'});
         } else {
-            var review = {
-                name: req.body.name,
-                placeType: req.body.placeType,
-                stars: req.body.stars
-            };
-            Reviews.create(review, function (err, review) {
-                if (err) {
-                    res.status(500).send({'error': err});
+            authentification.verifyToken(req)
+            .then(function(user) {
+                if (!user) {
+                    res.status(403).send({err: 'Invalid Token'});
                 } else {
-                    res.status(201).send(review);
+                    if (!req.body.name || !req.body.placeType || !req.body.stars) {
+                        res.status(400).send({'error': 'Parametres manquants'});
+                    } else {
+                        return {
+                            name: req.body.name,
+                            placeType: req.body.placeType,
+                            stars: req.body.stars,
+                            user: user.login
+                        };
+                    }
                 }
+            })
+            .then(function(review) {
+                Reviews.create(review, function (err, review) {
+                    if (err) {
+                        res.status(500).send({'error': err});
+                    } else {
+                        res.status(201).send(review);
+                    }
+                });
             });
         }
     })
