@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  table
+    each review in reviews
+      tr
+        td
+            a(href='/reviews/#{review._id}') +
+        td= review.name
+        td= review.placeType
+        <td>
+        - for (var x = 0; x < review.stars; x++)
+            img(src="/assets/star.gif")
+        </td>

@@ -1,0 +1,7 @@
+extends layout
+
+block content
+  h1= review.name
+  h2= review.placeType
+  - for (var x = 0; x < review.stars; x++)
+    img(src="/assets/star.gif")
