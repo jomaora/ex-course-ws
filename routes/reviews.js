@@ -3,14 +3,32 @@ var router = express.Router();
 var _ = require('lodash');
 var Reviews = require('../database/reviews');
 
+var verifyHeaders = function(res, req) {
+    if (!req.headers['accept'].match(/json|html/)) {
+        res.status(406);
+        res.send({error: 'Only HTML or Json format are served.'});
+        return false;
+    }
+    return true;
+}
+
 router.route('/')
     
     .get(function (req, res) {
+        if (!verifyHeaders(res, req)) {
+            return;
+        }
         Reviews.find({}, function (err, reviews) {
             if (err) {
                 res.status(500).send({'error': err});
             } else {
-                res.send(reviews);
+                res.status(200);
+                if (req.headers['accept'].match(/json/)) {
+                    res.send(reviews);
+                }
+                else {
+                    res.render('reviews', {reviews: reviews});
+                }
             }
         });
     })
@@ -38,6 +56,9 @@ router.route('/')
 router.route('/:id')
     
     .get(function (req, res) {
+        if (!verifyHeaders(res, req)) {
+            return;
+        }
         if (!req.params.id) {
             res.status(400).send({'error': 'Operation Impossible'});
         } else {
@@ -48,7 +69,13 @@ router.route('/:id')
                     if (!review) {
                         res.status(404).send({'error': 'Id of review not found'});
                     } else {
-                        res.send(review);
+                        res.status(200);
+                        if (req.headers['accept'].match(/json/)) {
+                            res.send(review);
+                        }
+                        else if (req.headers['accept'].match(/html/)) {
+                            res.render('review', { review: review });
+                        }
                     }
                 }
             });
