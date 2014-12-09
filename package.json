@@ -1,6 +1,6 @@
 {
   "name": "jomaora-restapi",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -12,6 +12,7 @@
     "express": "~4.9.0",
     "jade": "~1.6.0",
     "lodash": "^2.4.1",
+    "mongoose": "^3.8.18",
     "morgan": "~1.3.0",
     "serve-favicon": "~2.1.3"
   }
