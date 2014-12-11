@@ -83,6 +83,9 @@ router.route('/:id')
     })
 
     .delete(function (req, res) {
+        if (!verifyHeaders(res, req)) {
+            return;
+        }
         if (!req.params.id) {
             res.status(400).send({'error': 'Operation Impossible'});
         } else {
@@ -90,7 +93,8 @@ router.route('/:id')
                 if (err) {
                     res.status(500).send({'error': err});
                 } else {
-                    res.status(204).send({'message': 'Deleted'});
+                    // delete method won't render any template. Rendering with be handle by utils.js
+                    res.status(204).send();
                 }
             });
         }
