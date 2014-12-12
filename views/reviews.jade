@@ -1,16 +1,30 @@
 extends layout
 
 block content
-  table
-    each review in reviews
-      tr(id='#{review._id}')
-        td
-            a(href='/reviews/#{review._id}') +
-        td= review.name
-        td= review.placeType
-        <td>
-        - for (var x = 0; x < review.stars; x++)
-            img(src="/assets/star.gif")
-        </td>
-        td
-            img(src='/assets/delete.png', onClick='deleteReview("#{review._id}")')
+  div(style='display:inline-block;float:left')
+    table
+        each review in reviews
+          tr(id='#{review._id}')
+            td
+                a(href='/reviews/#{review._id}') +
+            td= review.name
+            td= review.placeType
+            <td>
+            - for (var x = 0; x < review.stars; x++)
+                img(src="/assets/star.gif")
+            </td>
+            td
+                img(src='/assets/delete.png', onClick='deleteReview("#{review._id}")')
+
+  div(style='display:inline-block;margin-left:250px')
+    form(method='POST' action='/reviews')
+        span(style='display:inline-block;width:100px;') Name:
+        input(id='name', type='text')
+        br
+        span(style='display:inline-block;width:100px;') PlaceType:
+        input(id='placeType', type='text')
+        br
+        span(style='display:inline-block;width:100px;') Stars:
+        input(id='stars', type='text')
+        br
+        input(type='submit', value='SAVE')
