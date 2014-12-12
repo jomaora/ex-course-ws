@@ -3,8 +3,8 @@ var router = express.Router();
 var _ = require('lodash');
 var Reviews = require('../database/reviews');
 
-var verifyHeaders = function(res, req) {
-    if (!req.headers['accept'].match(/json|html/)) {
+var verifyHeaders = function(res, req, header) {
+    if (!req.headers[header].match(/json|html/)) {
         res.status(406);
         res.send({error: 'Only HTML or Json format are served.'});
         return false;
@@ -15,7 +15,7 @@ var verifyHeaders = function(res, req) {
 router.route('/')
     
     .get(function (req, res) {
-        if (!verifyHeaders(res, req)) {
+        if (!verifyHeaders(res, req, 'accept')) {
             return;
         }
         Reviews.find({}, function (err, reviews) {
@@ -56,7 +56,7 @@ router.route('/')
 router.route('/:id')
     
     .get(function (req, res) {
-        if (!verifyHeaders(res, req)) {
+        if (!verifyHeaders(res, req, 'accept')) {
             return;
         }
         if (!req.params.id) {
@@ -83,7 +83,7 @@ router.route('/:id')
     })
 
     .delete(function (req, res) {
-        if (!verifyHeaders(res, req)) {
+        if (!verifyHeaders(res, req, 'accept')) {
             return;
         }
         if (!req.params.id) {
@@ -101,17 +101,21 @@ router.route('/:id')
     })
 
     .put(function (req, res) {
-         if (!req.params.id) {
-             res.status(400).send({'error': 'Parametres manquants'});
-         } else {
-             Reviews.findByIdAndUpdate(req.params.id, req.body, function (err, review) {
-                 if (err) {
-                     res.status(500).send({'error': err});
-                 } else {
-                     res.status(200).send(review);
-                 }
-             });
-         }
+        // Adding verification on content-type, received but no render any template
+        if (!verifyHeaders(res, req, 'content-type')) {
+            return;
+        }
+        if (!req.params.id) {
+            res.status(400).send({'error': 'Parametres manquants'});
+        } else {
+            Reviews.findByIdAndUpdate(req.params.id, req.body, function (err, review) {
+                if (err) {
+                    res.status(500).send({'error': err});
+                } else {
+                    res.status(200).send(review);
+                }
+            });
+        }
     })
 ;
 
