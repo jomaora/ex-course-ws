@@ -1,7 +1,24 @@
 extends layout
 
 block content
-  h1= review.name
-  h2= review.placeType
-  - for (var x = 0; x < review.stars; x++)
-    img(src="/assets/star.gif")
+  div(id='content')
+      img(src='/assets/edit.png', onClick='showEditForm(true)')
+      h1= review.name
+      h2= review.placeType
+      - for (var x = 0; x < review.stars; x++)
+        img(src="/assets/star.gif")
+      br
+
+  div(id='edit' style='display:none')
+    form
+        input(id='name', type='text', value='#{review.name}')
+        input(id='placeType', type='text', value='#{review.placeType}')
+        input(id='stars', type='text', value='#{review.stars}')
+        input(type='button', onclick='updateReview("#{review._id}")' value='OK')
+        input(type='button', onclick='showEditForm(false)' value='Close')
+
+    div(id='success' style='color:green')
+    div(id='error' style='color:red')
+
+  div(style='margin-top:20px')
+    a(href='/reviews') ALL REVIEWS
