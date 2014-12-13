@@ -1,11 +1,18 @@
 extends layout
 
 block content
-  div(style='display:inline-block;float:left')
+  div(class='notificationsContainer')
+    h1 #{reviews.length} Stored Reviews
     table
+        tbody
+            td(class='edit') Edit
+            td Name
+            td Place Type
+            td Stars
+            td(class='edit')
         each review in reviews
           tr(id='#{review._id}')
-            td
+            td(class='edit')
                 a(href='/reviews/#{review._id}') +
             td= review.name
             td= review.placeType
@@ -13,10 +20,11 @@ block content
             - for (var x = 0; x < review.stars; x++)
                 img(src="/assets/star.gif")
             </td>
-            td
+            td(class='edit')
                 img(src='/assets/delete.png', onClick='deleteReview("#{review._id}")')
 
-  div(style='display:inline-block;margin-left:250px')
+  div(class='notificationsContainer')
+    h2 Add a new Review
     form(method='POST' action='/reviews')
         span(style='display:inline-block;width:100px;') Name:
         input(id='name', type='text')
