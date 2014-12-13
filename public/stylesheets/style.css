@@ -6,3 +6,20 @@ body {
 a {
   color: #00B7FF;
 }
+
+.notificationsContainer {
+    border-color: black;
+    border-style: solid;
+    display: inline-block;
+    float: left;
+    padding: 30px 80px;
+    margin: 20px;
+}
+
+td {
+    padding: 5px 70px 5px 5px;
+}
+
+.edit {
+    padding: 5px 5px 5px 5px;
+}
