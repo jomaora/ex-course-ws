@@ -27,12 +27,12 @@ block content
     h2 Add a new Review
     form(method='POST' action='/reviews')
         span(style='display:inline-block;width:100px;') Name:
-        input(id='name', type='text')
+        input(id='name', name='name' type='text')
         br
         span(style='display:inline-block;width:100px;') PlaceType:
-        input(id='placeType', type='text')
+        input(id='placeType', name='placeType', type='text')
         br
         span(style='display:inline-block;width:100px;') Stars:
-        input(id='stars', type='text')
+        input(id='stars', name='stars', type='text')
         br
         input(type='submit', value='SAVE')
