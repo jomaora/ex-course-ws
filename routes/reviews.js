@@ -46,7 +46,12 @@ router.route('/')
                 if (err) {
                     res.status(500).send({'error': err});
                 } else {
-                    res.status(201).send(review);
+                    if (req.headers['accept'].match(/json/)) {
+                        res.status(201).send(review);
+                    }
+                    else {
+                        res.redirect(301, '/reviews/' + review._id);
+                    }
                 }
             });
         }
