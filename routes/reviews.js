@@ -4,13 +4,19 @@ var _ = require('lodash');
 var Reviews = require('../database/reviews');
 
 var verifyHeaders = function(res, req, header) {
-    if (!req.headers[header].match(/json|html/)) {
+    if (!req.headers[header].match(/json|html|text\/plain/)) {
         res.status(406);
-        res.send({error: 'Only HTML or Json format are served.'});
+        res.send({error: 'Only HTML, Json or text/plain format are served.'});
         return false;
     }
     return true;
-}
+};
+
+var reduceReviewToString = function(review) {
+    return _.reduce(_.pick(review, ['name', 'placeType', 'stars']), function(textToSent, attributeValue) {
+        return textToSent + '_' + attributeValue;
+    });
+};
 
 router.route('/')
     
@@ -23,12 +29,23 @@ router.route('/')
                 res.status(500).send({'error': err});
             } else {
                 res.status(200);
-                if (req.headers['accept'].match(/json/)) {
-                    res.send(reviews);
-                }
-                else {
-                    res.render('reviews', {reviews: reviews});
-                }
+                res.format({
+                    'text/plain': function(){
+                        var textToSent = '';
+                        _.forEach(reviews, function(review) {
+                            textToSent += reduceReviewToString(review) + '|';
+                        })
+                        res.send(textToSent);
+                    },
+
+                    'text/html': function(){
+                        res.render('reviews', {reviews: reviews});
+                    },
+
+                    'application/json': function(){
+                        res.send(reviews);
+                    }
+                });
             }
         });
     })
@@ -42,15 +59,30 @@ router.route('/')
                 placeType: req.body.placeType,
                 stars: req.body.stars
             };
+            console.log('User-Agent', req.headers['user-agent']);
             Reviews.create(review, function (err, review) {
                 if (err) {
                     res.status(500).send({'error': err});
                 } else {
-                    if (req.headers['accept'].match(/json/)) {
+                    res.format({
+                    'text/plain': function(){
+                        res.status(201).send('201');
+                    },
+
+                    'text/html': function(){
+                        res.redirect(301, '/reviews/' + review._id);
+                    },
+
+                    'application/json': function(){
                         res.status(201).send(review);
                     }
+                });
+
+                    if (req.headers['accept'].match(/json/)) {
+                        
+                    }
                     else {
-                        res.redirect(301, '/reviews/' + review._id);
+                        
                     }
                 }
             });
