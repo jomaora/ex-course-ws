@@ -4,12 +4,17 @@ var _ = require('lodash');
 var Reviews = require('../database/reviews');
 
 var verifyHeaders = function(res, req, header) {
-    if (!req.headers[header].match(/json|html|text\/plain/)) {
-        res.status(406);
-        res.send({error: 'Only HTML, Json or text/plain format are served.'});
+    if(req.headers[header]) {
+        if (!req.headers[header].match(/json|html|text\/plain/)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    else {
         return false;
     }
-    return true;
 };
 
 var reduceReviewToString = function(review) {
@@ -21,11 +26,15 @@ var reduceReviewToString = function(review) {
 router.route('/')
     
     .get(function (req, res) {
+        console.log('verifyHeaders', verifyHeaders(res, req, 'accept'));
         if (!verifyHeaders(res, req, 'accept')) {
+            res.status(406);
+            res.send({error: 'Only HTML, Json or text/plain format are served.'});
             return;
         }
         Reviews.find({}, function (err, reviews) {
             if (err) {
+                console.error(err);
                 res.status(500).send({'error': err});
             } else {
                 res.status(200);
@@ -94,6 +103,8 @@ router.route('/:id')
     
     .get(function (req, res) {
         if (!verifyHeaders(res, req, 'accept')) {
+            res.status(406);
+            res.send({error: 'Only HTML, Json or text/plain format are served.'});
             return;
         }
         if (!req.params.id) {
@@ -121,6 +132,8 @@ router.route('/:id')
 
     .delete(function (req, res) {
         if (!verifyHeaders(res, req, 'accept')) {
+            res.status(406);
+            res.send({error: 'Only HTML, Json or text/plain format are served.'});
             return;
         }
         if (!req.params.id) {
@@ -140,6 +153,8 @@ router.route('/:id')
     .put(function (req, res) {
         // Adding verification on content-type, received but no render any template
         if (!verifyHeaders(res, req, 'content-type')) {
+            res.status(406);
+            res.send({error: 'Only HTML, Json or text/plain format are served.'});
             return;
         }
         if (!req.params.id) {
