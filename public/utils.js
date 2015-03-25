@@ -7,6 +7,7 @@ function deleteReview(reviewId) {
         }
     }
     httpRequest.open('DELETE', '/reviews/' + reviewId, true);
+    httpRequest.setRequestHeader("Accept", "application/json");
     httpRequest.send();
 }
 
