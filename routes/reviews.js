@@ -74,25 +74,18 @@ router.route('/')
                     res.status(500).send({'error': err});
                 } else {
                     res.format({
-                    'text/plain': function(){
-                        res.status(201).send('201');
-                    },
+                        'text/plain': function(){
+                            res.status(201).send('201');
+                        },
 
-                    'text/html': function(){
-                        res.redirect(301, '/reviews/' + review._id);
-                    },
+                        'text/html': function(){
+                            res.redirect(301, '/reviews/' + review._id);
+                        },
 
-                    'application/json': function(){
-                        res.status(201).send(review);
-                    }
-                });
-
-                    if (req.headers['accept'].match(/json/)) {
-                        
-                    }
-                    else {
-                        
-                    }
+                        'application/json': function(){
+                            res.status(201).send(review);
+                        }
+                    });
                 }
             });
         }
