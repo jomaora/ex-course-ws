@@ -111,12 +111,19 @@ router.route('/:id')
                         res.status(404).send({'error': 'Id of review not found'});
                     } else {
                         res.status(200);
-                        if (req.headers['accept'].match(/json/)) {
-                            res.send(review);
-                        }
-                        else if (req.headers['accept'].match(/html/)) {
-                            res.render('review', { review: review });
-                        }
+                        res.format({
+                            'text/plain': function(){
+                                res.send(reduceReviewToString(review));
+                            },
+
+                            'text/html': function(){
+                                res.render('review', { review: review });
+                            },
+
+                            'application/json': function(){
+                                res.send(review);
+                            }
+                        });
                     }
                 }
             });
